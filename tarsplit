@@ -49,6 +49,14 @@ FILE=$1
 FILE_BASE=$(basename $FILE)
 NUM_PARTS=$2
 
+if test "${NUM_PARTS}" -lt 2
+then
+	echo "! "
+	echo "! Nunber of parts must be at least 2! (You said: ${NUM_PARTS})"
+	echo "! "
+	exit 1
+fi
+
 #
 # If our file doesn't start with a /, we'll need to prepend the starting directory.
 #
