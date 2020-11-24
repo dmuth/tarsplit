@@ -49,7 +49,7 @@ TAR=${DIR}/${FILE}
 
 if test ! -f "${TAR}"
 then
-	echo "! File not find: ${TAR}"
+	echo "! File not found: ${TAR}"
 	exit 1
 fi
 
