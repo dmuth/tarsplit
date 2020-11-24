@@ -1,5 +1,7 @@
 #!/bin/bash
 #
+# https://github.com/dmuth/tarsplit
+#
 # This script will take a tarball and split it into 2 or more parts.
 # Most importantly, these parts WILL BE ALONG FILE BOUNDARIES.
 # The reason for splitting along file foundaries is to that extraction
