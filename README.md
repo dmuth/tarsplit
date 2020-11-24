@@ -1,6 +1,6 @@
+<img src="./img/tarsplit.png" width="300" align="right" />
 
 # Tarsplit
-
 A utility to split tarballs into smaller pieces along file boundaries.
 
 
