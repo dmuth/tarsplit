@@ -6,9 +6,6 @@
 # Errors are fatal
 set -e
 
-# Change to the directory of this script, for safety
-pushd $(dirname $0) > /dev/null
-
 # Our root directory for the tarball
 DIR="tarball-root-dir"
 
