@@ -45,11 +45,21 @@ fi
 
 FILE=$1
 NUM_PARTS=$2
-TAR=${DIR}/${FILE}
+
+#
+# If our file doesn't start with a /, we'll need to prepend the starting directory.
+#
+TAR=${FILE}
+if test ${TAR:0:1} != "/"
+then
+	TAR=${DIR}/${TAR}
+fi
 
 if test ! -f "${TAR}"
 then
+	echo "! "
 	echo "! File not found: ${TAR}"
+	echo "! "
 	exit 1
 fi
 
@@ -94,7 +104,15 @@ do
 	#cat ${FILELIST} # Debugging
 
 	PART_FILE="${FILE}-part-${PART}-of-${NUM_PARTS}"
-	PART_FILE_FULL="${DIR}/${PART_FILE}"
+
+	#
+	# If our part file doesn't start with a leading slash, then we need to qualify iy.
+	#
+	PART_FILE_FULL="${PART_FILE}"
+	if test ${PART_FILE:0:1} != "/"
+	then
+		PART_FILE_FULL="${DIR}/${PART_FILE_FULL}"
+	fi
 	echo "# Building part '${PART_FILE}'..."
 
 	#echo tar cfz ${PART_FILE_FULL} --files-from ${FILELIST} # Debugging
