@@ -97,8 +97,6 @@ do
 
 done
 
-ls -l
-
 # Cleanup
 rm -rf ${TMP} ${FILELIST}
 
