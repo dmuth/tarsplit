@@ -47,6 +47,12 @@ FILE=$1
 NUM_PARTS=$2
 TAR=${DIR}/${FILE}
 
+if test ! -f "${TAR}"
+then
+	echo "! File not find: ${TAR}"
+	exit 1
+fi
+
 #
 # Change to our temp directory for all work
 #
