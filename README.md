@@ -51,6 +51,15 @@ inheriting the previous container.  This would leverage the things Docker is goo
 
 ## Development
 
+### Support scripts
+
+- `bin/create-test-tarball.sh` - Create a test tarball with directories and files inside.
+- `sha1-from-directory.sh` - Get a recursive list of all files in a directory, sort it, SHA1 each file, then concatenate all SHA1s and SHA1 that!
+- `sha1-from-tarball.sh` - Extract a tarball, then do the same thing to the contents as `sha1-from-directory.sh`.
+
+
+### Tests
+
 Tests can be run with `tests.sh`.
 
 
