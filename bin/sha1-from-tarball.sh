@@ -53,9 +53,10 @@ done
 #
 for FILE in $(find . -type f | sort)
 do
-	sha1sum $FILE >> $RESULTS
+	sha1sum $FILE | awk '{ print $1 }' >> $RESULTS
 done
 
+#cat $RESULTS # Debugging
 sha1sum $RESULTS | awk '{ print $1 }'
 
 # Cleanup
