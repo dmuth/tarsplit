@@ -45,7 +45,7 @@ done
 
 echo "# Creating test tarball: ${TARBALL}"
 rm -fv ${TARBALL} > /dev/null
-tar cfvz ${TARBALL} ${DIR} 2> /dev/null
+tar cfz ${TARBALL} ${DIR}
 rm -rf ${DIR}
 
 echo "# Done! (Directory ${DIR} has since been removed...)"
