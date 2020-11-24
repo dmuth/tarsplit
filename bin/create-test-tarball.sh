@@ -12,6 +12,14 @@ DIR="tarball-root-dir"
 # Our test tarball
 TARBALL="test-tarball.tgz"
 
+TMP=$(mktemp -d)
+START_DIR=$(pwd)
+
+#
+# Do all work in our temp directory.
+#
+pushd ${TMP} > /dev/null
+
 #
 # Create a series of directories with files and directories under them.
 #
@@ -40,10 +48,14 @@ do
 
 done
 
+#
+# Create our test tarball, move it to our starting directory, and remove our temp directory
+#
 echo "# Creating test tarball: ${TARBALL}"
 rm -fv ${TARBALL} > /dev/null
 tar cfz ${TARBALL} ${DIR}
-rm -rf ${DIR}
+mv ${TARBALL} ${START_DIR}
+rm -rf ${TMP}
 
 echo "# Done! (Directory ${DIR} has since been removed...)"
 
