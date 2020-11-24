@@ -1,0 +1,9 @@
+
+# Vim droppings
+*~
+*.swp
+
+# Testing-related files
+tarball-root-dir
+test-tarball.tgz
+
