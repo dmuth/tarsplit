@@ -6,6 +6,8 @@
 # Errors are fatal
 set -e
 
+NUM_FILES_AND_DIRS=5
+
 # Our root directory for the tarball
 DIR="tarball-root-dir"
 
@@ -24,7 +26,7 @@ pushd ${TMP} > /dev/null
 # Create a series of directories with files and directories under them.
 #
 echo "# Creating test directory: ${DIR}"
-for I in $(seq 5)
+for I in $(seq ${NUM_FILES_AND_DIRS})
 do
 	mkdir -p ${DIR}/${I}
 
