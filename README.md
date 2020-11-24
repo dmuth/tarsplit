@@ -60,7 +60,9 @@ inheriting the previous container.  This would leverage the things Docker is goo
 
 ### Tests
 
-Tests can be run with `tests.sh`.
+Tests can be run with `tests.sh`.  A successful run looks something like this:
+
+<img src="./img/tests.png" />
 
 
 ## TODO
