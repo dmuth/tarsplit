@@ -44,6 +44,7 @@ then
 fi
 
 FILE=$1
+FILE_BASE=$(basename $FILE)
 NUM_PARTS=$2
 
 #
@@ -104,20 +105,11 @@ do
 	#cat ${FILELIST} # Debugging
 
 	PART_FILE="${FILE}-part-${PART}-of-${NUM_PARTS}"
+	PART_FILE="${DIR}/${FILE_BASE}-part-${PART}-of-${NUM_PARTS}"
 
-	#
-	# If our part file doesn't start with a leading slash, then we need to qualify iy.
-	#
-	PART_FILE_FULL="${PART_FILE}"
-	if test ${PART_FILE:0:1} != "/"
-	then
-		PART_FILE_FULL="${DIR}/${PART_FILE_FULL}"
-	fi
 	echo "# Building part '${PART_FILE}'..."
 
-	#echo tar cfz ${PART_FILE_FULL} --files-from ${FILELIST} # Debugging
-	tar cfz ${PART_FILE_FULL} --files-from ${FILELIST}
-
+	tar cfz ${PART_FILE} --files-from ${FILELIST} --no-recursion
 
 done
 
