@@ -78,6 +78,7 @@ fi
 # Change to our temp directory for all work
 #
 pushd ${TMP} > /dev/null
+#echo "Temp directory: ${TMP}" # Debugging
 
 NUM_FILES=$(tar tfvz ${TAR} | wc -l | awk '{print $1}' )
 echo "# Number of files in ${FILE}: $NUM_FILES"
@@ -111,7 +112,8 @@ do
 
 	echo "# Starting file index: ${START}, ending file index: ${END}"
 
-	tar tfvz ${TAR} | sed -n ${START},${END}p | cut -c49- > ${FILELIST}
+	#echo "tar tfz ${TAR} | sed -n ${START},${END}p > ${FILELIST}" # Degbugging
+	tar tfz ${TAR} | sed -n ${START},${END}p > ${FILELIST}
 	#cat ${FILELIST} # Debugging
 
 	PART_FILE="${FILE}-part-${PART}-of-${NUM_PARTS}"
@@ -119,6 +121,7 @@ do
 
 	echo "# Building part '${PART_FILE}'..."
 
+	#echo tar cfz ${PART_FILE} --files-from ${FILELIST} --no-recursion # Debugging
 	tar cfz ${PART_FILE} --files-from ${FILELIST} --no-recursion
 
 done
