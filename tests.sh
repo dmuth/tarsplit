@@ -51,6 +51,7 @@ function split_and_test() {
 	done
 
 	echo "# Getting our SHA1 from extracted files..."
+	#${BIN}/sha1-from-directory.sh tarball-root-dir # Debugging
 	SHA1_CHECK=$(${BIN}/sha1-from-directory.sh tarball-root-dir)
 
 	if test $SHA1 == $SHA1_CHECK

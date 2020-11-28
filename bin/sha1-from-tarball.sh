@@ -13,6 +13,7 @@ DIR=$(pwd)
 TMP=$(mktemp -d)
 RESULTS=$(mktemp)
 
+
 #
 # Print our syntax and exit with an error.
 #
@@ -51,9 +52,31 @@ done
 # Sort our entire directory tree, calculate the SHA1 for each file, and 
 # add the result to our results file.
 #
-for FILE in $(find . -type f | sort)
+for FILE in $(find * -type f | sort)
 do
+	#sha1sum $FILE # Debugging
 	sha1sum $FILE | awk '{ print $1 }' >> $RESULTS
+done
+
+#
+# Now go through our symlinks and if it is a valid symlink, SHA1 the contents,
+# otherwise SHA1 the filename.
+#
+# FUN FACT: If I run find with "*" instead of "." as the path, I won't get all
+# of those leading "./" characters.  I'll miss hidden files, but that should be 
+# acceptable for the intended use of this script.
+#
+for FILE in $(find * -type l | sort )
+do
+	if test -e $FILE
+	then
+		#sha1sum $FILE # Debugging
+		sha1sum $FILE | awk '{ print $1 }' >> $RESULTS
+	else
+		#echo "Broken symlink: $FILE" # Debugging
+		#echo $FILE | sha1sum # Debugging
+		echo $FILE | sha1sum | awk '{ print $1 }' >> $RESULTS
+	fi
 done
 
 #cat $RESULTS # Debugging

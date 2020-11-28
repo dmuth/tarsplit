@@ -37,18 +37,41 @@ fi
 DIR=$1
 
 #
-# Do all work in our directory so the name of the directory and and possible
-# case issues (looking at you, OS/X) do not potentially interfere
+# Remove any trailing slashes from the directory name
 #
-pushd ${DIR} > /dev/null
+DIR=$(echo $DIR | sed -e "s|/$||" )
+
+#
+# Remove ./ from the start of the path as that can also cause problems and is uncessary.
+#
+DIR=$(echo $DIR | sed -e "s|\./||" )
+
 
 #
 # Sort our entire directory tree, calculate the SHA1 for each file, and 
 # add the result to our results file.
 #
-for FILE in $(find . -type f | sort)
+for FILE in $(find ${DIR} -type f | sort)
 do
+	#sha1sum $FILE # Debugging
 	sha1sum $FILE | awk '{ print $1 }' >> $RESULTS
+done
+
+#
+# Now go through our symlinks and if it is a valid symlink, SHA1 the contents,
+# otherwise SHA1 the filename.
+#
+for FILE in $(find ${DIR} -type l | sort )
+do
+	if test -e $FILE
+	then
+		#sha1sum $FILE # Debugging
+		sha1sum $FILE | awk '{ print $1 }' >> $RESULTS
+	else
+		#echo "Broken symlink: $FILE" # Debugging
+		#echo $FILE | sha1sum # Debugging
+		echo $FILE | sha1sum | awk '{ print $1 }' >> $RESULTS
+	fi
 done
 
 #cat $RESULTS # Debugging
