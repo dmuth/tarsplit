@@ -60,7 +60,10 @@ def open_chunkfile(file, part, num, dry_run = False):
 
 	out = None
 
-	filename = f"{os.path.basename(file)}-part-{part}-of-{num}"
+	num_len = len(str(num))
+	part_formatted = str(part).zfill(num_len)
+
+	filename = f"{os.path.basename(file)}-part-{part_formatted}-of-{num}"
 	if not dry_run:
 		out = tarfile.open(filename, "w:gz")
 
@@ -76,9 +79,10 @@ def main(args):
 
 	t = tarfile.open(args.file, "r")
 
+	print(f"Welcome to Tarsplit! Reading file {args.file}...")
 	(total_file_size, chunk_size) = get_chunk_size(t, args.num)
 
-	print(f"Welcome to Tarsplit!  Total uncompressed file size: {total_file_size} bytes, "
+	print(f"Total uncompressed file size: {total_file_size} bytes, "
 		+ f"num chunks: {args.num}, chunk size: {chunk_size} bytes")
 
 	(filename, out) = open_chunkfile(args.file, 1, args.num, dry_run = args.dry_run)
