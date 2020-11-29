@@ -50,7 +50,7 @@ transfer in parallel...
 While investigating, the culprit turned out to be a very large tarball.  I wanted a way to split that
 tarball into multiple smaller tarballs, each of which contained a portion of the filesystem.  Then, I could
 build multiple Docker containers, each with a portion of the original tarball's files, with each container
-inheriting the previous container.  This would leverage the things Docker is good at: layered filesystems.
+inheriting the previous container.  This would leverage one of the things Docker is good at: layered filesystems.
 
 
 ## Development
