@@ -78,8 +78,8 @@ def main(args):
 
 	(total_file_size, chunk_size) = get_chunk_size(t, args.num)
 
-	print(f"Total uncompressed file size: {total_file_size} bytes, "
-		+ f"num chunks: {args.num}, chunk_size: {chunk_size} bytes")
+	print(f"Welcome to Tarsplit!  Total uncompressed file size: {total_file_size} bytes, "
+		+ f"num chunks: {args.num}, chunk size: {chunk_size} bytes")
 
 	(filename, out) = open_chunkfile(args.file, 1, args.num, dry_run = args.dry_run)
 
@@ -87,16 +87,33 @@ def main(args):
 	current_chunk = 1
 	num_files_in_current_chunk = 0
 
+	#
+	# Loop through are files, and write them out to separate tarballs.
+	#
 	for f in t.getmembers():
 
 		name = f.name
 		size += f.size
-		num_files_in_current_chunk += 1
 
 		f = t.extractfile(name)
 		info = t.getmember(name)
 		if not args.dry_run:
 			out.addfile(info, f)
+
+		num_files_in_current_chunk += 1
+		write_status = False
+		if num_files_in_current_chunk < 100:
+			if num_files_in_current_chunk % 10 == 0:
+				write_status = True
+		elif num_files_in_current_chunk < 1000:
+			if num_files_in_current_chunk % 100 == 0:
+				write_status = True
+		else:
+			if num_files_in_current_chunk % 1000 == 0:
+				write_status = True
+
+		if write_status:
+			print(f"{num_files_in_current_chunk} files written to {filename}")
 
 		if current_chunk < args.num:
 			if size >= chunk_size:
