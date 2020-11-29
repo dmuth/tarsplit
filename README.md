@@ -44,7 +44,7 @@ unlike the previous version of this app which was written in Bash Shell Script.
 While working on <a href="https://github.com/dmuth/splunk-lab">Splunk Lab</a>, I kept running into
 an issue where a particular layer in the Docker image was a Gigabyte in size.  This was a challenge because
 there was a number of wallclock seconds wasted when processing the large layer after a push or pull.  
-If only there was a way split that layer up into multiple smaller layers, which Docker would then 
+If only there was a way to split that layer up into multiple smaller layers, which Docker would then 
 transfer in parallel...
 
 While investigating, the culprit turned out to be a very large tarball.  I wanted a way to split that
