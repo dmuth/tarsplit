@@ -11,7 +11,7 @@ TARBALL="test-tarball.tgz"
 
 DIR=$(pwd)
 BIN=${DIR}/bin
-TARSPLIT=${DIR}/tarsplit
+TARSPLIT=${DIR}/tarsplit.py
 
 # Did any of the tests fail?
 FAILED=""
@@ -42,6 +42,7 @@ function split_and_test() {
 	pushd ${TMP} > /dev/null
 
 	echo "# Splitting our test tarball into ${NUM_PARTS} parts..."
+	#${TARSPLIT} ${DIR}/${TARBALL} $NUM_PARTS # Debugging
 	${TARSPLIT} ${DIR}/${TARBALL} $NUM_PARTS > /dev/null
 
 	echo "# Extracting parts we just created..."
