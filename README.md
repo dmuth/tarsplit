@@ -11,29 +11,33 @@ A utility to split tarballs into smaller pieces along file boundaries.
 
 ## Usage
 
-`tarsplit tarball num_files`
+`tarsplit [ --dry-run ] tarball num_files`
 
 Example run:
 ```
-$ ./tarsplit test-tarball.tgz 3
-# Number of files in test-tarball.tgz: 61
-# Number of parts requested: 3
-# Number of files per part: 20 (last part rounds up)
-# Extracting file 'test-tarball.tgz' so that we can then build parts from that directory..
-# Generating part 1/3...
-# Starting file index: 1, ending file index: 20
-# Building part '/Users/doug/development/tarsplit/test-tarball.tgz-part-1-of-3'...
-# Generating part 2/3...
-# Starting file index: 21, ending file index: 40
-# Building part '/Users/doug/development/tarsplit/test-tarball.tgz-part-2-of-3'...
-# Generating part 3/3...
-# We're on the last part, so file Index is set to $ for sed...
-# Starting file index: 41, ending file index: $
-# Building part '/Users/doug/development/tarsplit/test-tarball.tgz-part-3-of-3'...
+$ ./tarsplit ./test-tarball.tgz 3
+Welcome to Tarsplit! Reading file ./test-tarball.tgz...
+Total uncompressed file size: 31457280 bytes, num chunks: 3, chunk size: 10485760 bytes
+10 files written to test-tarball.tgz-part-1-of-3
+20 files written to test-tarball.tgz-part-1-of-3
+Successfully wrote 10485760 bytes in 22 files to test-tarball.tgz-part-1-of-3
+10 files written to test-tarball.tgz-part-2-of-3
+20 files written to test-tarball.tgz-part-2-of-3
+Successfully wrote 10485760 bytes in 22 files to test-tarball.tgz-part-2-of-3
+10 files written to test-tarball.tgz-part-3-of-3
+20 files written to test-tarball.tgz-part-3-of-3
+Successfully wrote 10485760 bytes in 21 files to test-tarball.tgz-part-3-of-3
 ```
 
 
 ## FAQ
+
+### How does work?
+
+This script is written in Python, and uses the <a href="https://docs.python.org/3/library/tarfile.html">tarfile module</a> 
+to read and write tarfiles.  This has the advantage of not having to extract the entire tarball,
+unlike the previous version of this app which was written in Bash Shell Script.
+
 
 ### Why?
 

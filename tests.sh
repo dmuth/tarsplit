@@ -11,7 +11,7 @@ TARBALL="test-tarball.tgz"
 
 DIR=$(pwd)
 BIN=${DIR}/bin
-TARSPLIT=${DIR}/tarsplit.py
+TARSPLIT=${DIR}/tarsplit
 
 # Did any of the tests fail?
 FAILED=""
