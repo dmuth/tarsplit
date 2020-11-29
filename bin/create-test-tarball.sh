@@ -59,10 +59,13 @@ do
 	# I am aware that this will result in the first symlink being broken, and
 	# that is intentional, as I want broken symlinks to created/tested.
 	#
-	SOURCE="${DIR}/${I}/file-${I}.link"
-	TARGET="../file-$(( I - 1 )).data" 
+	if test "$I" -gt 1
+	then
+		SOURCE="${DIR}/${I}/file-${I}.link"
+		TARGET="../file-$(( I - 1 )).data" 
 
-	ln -sf ${TARGET} ${SOURCE} 
+		ln -sf ${TARGET} ${SOURCE} 
+	fi
 
 done
 
