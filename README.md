@@ -1,12 +1,29 @@
 <img src="./img/tarsplit.png" width="300" align="right" />
 
 # Tarsplit
+
 A utility to split tarballs into smaller pieces along file boundaries.
+
+This is useful for gigantic tarballs that need to need to be split up so that they can fit on USB sticks, more reasonably sized Docker layers, or whatever.
+
 
 
 ## Installation
 
-- `curl https://raw.githubusercontent.com/dmuth/tarsplit/main/tarsplit > /usr/local/bin/tarsplit && chmod 755 /usr/local/bin/tarsplit`
+### Homebrew
+
+```
+curl https://raw.githubusercontent.com/dmuth/tarsplit/main/Formula/tarsplit.rb > tarsplit.rb \
+   && brew install ./tarsplit.rb
+```
+
+
+### Manually
+
+```
+curl https://raw.githubusercontent.com/dmuth/tarsplit/main/tarsplit > /usr/local/bin/tarsplit \
+   && chmod 755 /usr/local/bin/tarsplit
+```
 
 
 ## Usage
