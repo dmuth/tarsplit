@@ -49,7 +49,7 @@ Successfully wrote 10485760 bytes in 21 files to test-tarball.tgz-part-3-of-3
 
 ## FAQ
 
-### How does work?
+### How does it work?
 
 This script is written in Python, and uses the <a href="https://docs.python.org/3/library/tarfile.html">tarfile module</a> 
 to read and write tarfiles.  This has the advantage of not having to extract the entire tarball,
