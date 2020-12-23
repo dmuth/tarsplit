@@ -178,6 +178,7 @@ def threadMain(thread_id, filename, chunk_filename, chunk_files, dry_run):
 	if not dry_run:
 		out = tarfile.open(chunk_filename, "w:gz")
 
+	print(f"{thread_id}: Going through chunk files...")
 	for file in chunk_files:
 		f = t.extractfile(file)
 		info = t.getmember(file)
@@ -197,6 +198,59 @@ def threadMain(thread_id, filename, chunk_filename, chunk_files, dry_run):
 
 
 #
+# Go through our tarfile and break it up into chunks.
+#
+def get_chunks(file, num_chunks):
+
+	files = []
+	chunks = []
+	total_file_size = 0
+
+	#
+	# Go through the tarfile and grab all of our files and sizes.
+	#
+	t = tarfile.open(file, "r")
+	for f in t.getmembers():
+		total_file_size += f.size
+		name = f.name
+		size = f.size
+		files.append({"name": name, "size": size})
+
+	t.close()
+	chunk_size = int(total_file_size / num_chunks)
+
+	#
+	# Now go through our files and break them into chunks.
+	#
+	chunk = []
+	current_chunk = 1
+	size = 0
+	for file in files:
+		chunk.append(file["name"])
+		size += file["size"]
+
+		#
+		# Only check sizes if we're not on the final chunk.
+		#
+		if current_chunk < num_chunks:
+			if size >= chunk_size:
+
+				current_chunk += 1
+				size = 0
+
+				chunks.append(chunk)
+				chunk = []
+
+
+	# Append the final chunk
+	chunks.append(chunk)
+
+	retval = (total_file_size, chunk_size, chunks)
+
+	return(retval)
+
+
+#
 # Put the files in the tarball into an list of chunks where each chunk is a list of files,
 # and then send each chunk to a separate thread.
 #
@@ -207,41 +261,10 @@ def mainThreaded(args):
 	t = tarfile.open(args.file, "r")
 
 	print(f"Welcome to Tarsplit! Reading file {args.file}...")
-	(total_file_size, chunk_size) = get_chunk_size(t, args.num)
+	(total_file_size, chunk_size, chunks) = get_chunks(args.file, args.num)
 
 	print(f"Total uncompressed file size: {total_file_size} bytes, "
 		+ f"num chunks: {args.num}, chunk size: {chunk_size} bytes")
-
-	chunks = []
-	chunk = []
-
-	size = 0
-	current_chunk = 1
-	num_files_in_current_chunk = 0
-
-	#
-	# Loop through files from the tarball, and write them to chunks
-	#
-	for f in t.getmembers():
-
-		name = f.name
-		size += f.size
-		chunk.append(name)
-
-		num_files_in_current_chunk += 1
-
-		if current_chunk < args.num:
-			if size >= chunk_size:
-
-				current_chunk += 1
-				num_files_in_current_chunk = 0
-				size = 0
-
-				chunks.append(chunk)
-				chunk = []
-
-	chunks.append(chunk)
-	t.close()
 
 	threads = []
 	i = 0
