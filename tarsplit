@@ -197,7 +197,8 @@ def threadMain(thread_id, filename, chunk_filename, chunk_files, dry_run):
 
 
 #
-# Split a tarball using threads
+# Put the files in the tarball into an list of chunks where each chunk is a list of files,
+# and then send each chunk to a separate thread.
 #
 def mainThreaded(args):
 
@@ -219,7 +220,7 @@ def mainThreaded(args):
 	num_files_in_current_chunk = 0
 
 	#
-	# Loop through are files, and write them out to separate tarballs.
+	# Loop through files from the tarball, and write them to chunks
 	#
 	for f in t.getmembers():
 
@@ -234,6 +235,7 @@ def mainThreaded(args):
 
 				current_chunk += 1
 				num_files_in_current_chunk = 0
+				size = 0
 
 				chunks.append(chunk)
 				chunk = []
@@ -258,10 +260,6 @@ def mainThreaded(args):
 		print(f"Waiting for thread {thread.name} to finish...")
 		thread.join()
 
-
-#
-# Split a tarball using threads
-#
 
 
 #main(args)
