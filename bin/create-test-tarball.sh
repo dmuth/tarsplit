@@ -6,15 +6,32 @@
 # Errors are fatal
 set -e
 
-NUM_FILES_AND_DIRS=10
-#NUM_FILES_AND_DIRS=5
-#NUM_FILES_AND_DIRS=2 # Testing/Debugging
-
 # Our root directory for the tarball
 DIR="tarball-root-dir"
 
 # Our test tarball
 TARBALL="test-tarball.tgz"
+
+#
+# How many directories and how many files in each directory?
+#
+NUM_FILES_AND_DIRS=5
+
+if test "$1" == "-h" -o "$1" == "--help"
+then
+	echo "! "
+	echo "! Syntax: $0 [ num_files_and_directories ]"
+	echo "! "
+	echo "! num_files_and_directories - The number of directories and files in each dir (default: ${NUM_FILES_AND_DIRS})"
+	echo "! "
+	exit 1
+
+elif test "$1"
+then
+	NUM_FILES_AND_DIRS=$1
+
+fi
+
 
 TMP=$(mktemp -d)
 START_DIR=$(pwd)
@@ -27,7 +44,7 @@ pushd ${TMP} > /dev/null
 #
 # Create a series of directories with files and directories under them.
 #
-echo "# Creating test directory: ${DIR}"
+echo "# Creating test directory: ${DIR} (${NUM_FILES_AND_DIRS} directories and ${NUM_FILES_AND_DIRS} files in each directory)"
 for I in $(seq ${NUM_FILES_AND_DIRS})
 do
 	mkdir -p ${DIR}/${I}
@@ -73,7 +90,9 @@ done
 #
 # Create our test tarball, move it to our starting directory, and remove our temp directory
 #
-echo "# Creating test tarball: ${TARBALL}"
+NUM_FILES=$(find . -type f | wc -l | awk '{print $1}')
+TOTAL_SIZE=$(du -hs | awk '{print $1}')
+echo "# Creating test tarball: ${TARBALL} (${NUM_FILES} files, ${TOTAL_SIZE} size)"
 rm -fv ${TARBALL} > /dev/null
 tar cfz ${TARBALL} ${DIR}
 mv ${TARBALL} ${START_DIR}
