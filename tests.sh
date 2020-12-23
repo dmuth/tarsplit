@@ -31,28 +31,14 @@ function fail() {
         printf "[ ${RED}FAIL${NC} ] "
 }
 
+
 #
-# Split our tarball into a number of parts, extract those parts, and check SHA1 values.
+# Check the SHA1 from our tar parts versus the original SHA1
 #
-function split_and_test() {
+function check_sha1() {
 
-	NUM_PARTS=$1
+	SHA1=$1
 
-	TMP=$(mktemp -d)
-	pushd ${TMP} > /dev/null
-
-	echo "# Splitting our test tarball into ${NUM_PARTS} parts..."
-	#${TARSPLIT} ${DIR}/${TARBALL} $NUM_PARTS # Debugging
-	${TARSPLIT} ${DIR}/${TARBALL} $NUM_PARTS > /dev/null
-	#ls -l # Debugging
-
-	echo "# Extracting parts we just created..."
-	for FILE in test-tarball.tgz-part-*
-	do
-		tar xfz ${FILE}
-	done
-
-	echo "# Getting our SHA1 from extracted files..."
 	#${BIN}/sha1-from-directory.sh tarball-root-dir # Debugging
 	SHA1_CHECK=$(${BIN}/sha1-from-directory.sh tarball-root-dir)
 
@@ -67,6 +53,33 @@ function split_and_test() {
 		#exit 1
 	fi
 
+} # End of check_sha1()
+
+
+#
+# Split our tarball into a number of parts, extract those parts, and check SHA1 values.
+#
+function split_and_test() {
+
+	SHA1=$1
+	NUM_PARTS=$2
+
+	TMP=$(mktemp -d)
+	pushd ${TMP} > /dev/null
+
+	echo "# Splitting our test tarball into ${NUM_PARTS} parts..."
+	#${TARSPLIT} ${DIR}/${TARBALL} $NUM_PARTS # Debugging
+	${TARSPLIT} ${DIR}/${TARBALL} $NUM_PARTS > /dev/null
+	#ls -l # Debugging
+
+	echo "# Extracting parts we just created and comparing SHA1..."
+	for FILE in test-tarball.tgz-part-*
+	do
+		tar xfz ${FILE}
+	done
+
+	check_sha1 ${SHA1}
+
 	# Leave the directory and cleanup
 	popd > /dev/null
 	rm -rf ${TMP}
@@ -75,21 +88,34 @@ function split_and_test() {
 
 
 #
-# Create our test tarball and get the SHA1
+# Run the split_and_test() function against synthetic tarballs size n files/dirs.
 #
-${BIN}/create-test-tarball.sh
-SHA1=$(${BIN}/sha1-from-tarball.sh ${TARBALL})
-echo "##### Our SHA1 to match against: ${SHA1} #####"
+function split_and_test_n() {
+
+	N=$1
+
+	#
+	# Create our test tarball and get the SHA1
+	#
+	${BIN}/create-test-tarball.sh ${N}
+	SHA1=$(${BIN}/sha1-from-tarball.sh ${TARBALL})
+	echo "##### Our SHA1 to match against: ${SHA1} #####"
+
+	#
+	# Run our tests
+	#
+	for NUM_PARTS in 2 3 4 5 10
+	do
+		split_and_test ${SHA1} ${NUM_PARTS}
+	done
+
+} # End of split_and_test_n()
 
 
-#
-# Run our tests
-#
-split_and_test 2
-split_and_test 3
-split_and_test 4
-split_and_test 5
-split_and_test 10
+split_and_test_n 5
+split_and_test_n 10
+split_and_test_n 20
+
 
 if test "${FAILED}"
 then
