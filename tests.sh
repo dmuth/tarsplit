@@ -44,6 +44,7 @@ function split_and_test() {
 	echo "# Splitting our test tarball into ${NUM_PARTS} parts..."
 	#${TARSPLIT} ${DIR}/${TARBALL} $NUM_PARTS # Debugging
 	${TARSPLIT} ${DIR}/${TARBALL} $NUM_PARTS > /dev/null
+	#ls -l # Debugging
 
 	echo "# Extracting parts we just created..."
 	for FILE in test-tarball.tgz-part-*

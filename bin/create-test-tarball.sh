@@ -6,7 +6,8 @@
 # Errors are fatal
 set -e
 
-NUM_FILES_AND_DIRS=5
+NUM_FILES_AND_DIRS=10
+#NUM_FILES_AND_DIRS=5
 #NUM_FILES_AND_DIRS=2 # Testing/Debugging
 
 # Our root directory for the tarball
