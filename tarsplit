@@ -17,6 +17,7 @@
 import argparse
 import os
 import tarfile
+from threading import Thread
 
 
 parser = argparse.ArgumentParser(description = "Split up a tarball into 2 more chunks of roughly equal size.")
@@ -68,6 +69,17 @@ def open_chunkfile(file, part, num, dry_run = False):
 		out = tarfile.open(filename, "w:gz")
 
 	return(filename, out)
+
+
+#
+# Get the filename of the current chunkfile
+#
+def get_chunkfile_name(file, part, num):
+
+	num_len = len(str(num))
+	part_formatted = str(part).zfill(num_len)
+	filename = f"{os.path.basename(file)}-part-{part_formatted}-of-{num}"
+	return(filename)
 
 
 #
@@ -152,7 +164,107 @@ def main(args):
 		print(f"Would have written {size} bytes in {num_files_in_current_chunk} files to {filename}")
 
 
+#
+# Our main entrypoint for a thread.
+# It takes a thread ID, filename to write to, and a list of files to write to that filename.
+#
+def threadMain(thread_id, filename, chunk_filename, chunk_files, dry_run):
 
-main(args)
+	t = tarfile.open(filename, "r")
+
+	size = 0
+	out = None
+	num_files_written = 0
+	if not dry_run:
+		out = tarfile.open(chunk_filename, "w:gz")
+
+	for file in chunk_files:
+		f = t.extractfile(file)
+		info = t.getmember(file)
+		if not args.dry_run:
+			out.addfile(info, f)
+		size += info.size
+		num_files_written += 1
+		#print_write_status(file, num_files_written)
+
+	if not dry_run:
+		out.close()
+		print(f"{thread_id}: Successfully wrote {size} bytes in {len(chunk_files)} files to {chunk_filename}")
+	else:
+		print(f"Would have written {size} bytes in {num_files_in_current_chunk} files to {filename}")
+
+	t.close()
+
+
+#
+# Split a tarball using threads
+#
+def mainThreaded(args):
+
+	check_args(args)
+
+	t = tarfile.open(args.file, "r")
+
+	print(f"Welcome to Tarsplit! Reading file {args.file}...")
+	(total_file_size, chunk_size) = get_chunk_size(t, args.num)
+
+	print(f"Total uncompressed file size: {total_file_size} bytes, "
+		+ f"num chunks: {args.num}, chunk size: {chunk_size} bytes")
+
+	chunks = []
+	chunk = []
+
+	size = 0
+	current_chunk = 1
+	num_files_in_current_chunk = 0
+
+	#
+	# Loop through are files, and write them out to separate tarballs.
+	#
+	for f in t.getmembers():
+
+		name = f.name
+		size += f.size
+		chunk.append(name)
+
+		num_files_in_current_chunk += 1
+
+		if current_chunk < args.num:
+			if size >= chunk_size:
+
+				current_chunk += 1
+				num_files_in_current_chunk = 0
+
+				chunks.append(chunk)
+				chunk = []
+
+	chunks.append(chunk)
+	t.close()
+
+	threads = []
+	i = 0
+	for chunk in chunks:
+		chunk_name = get_chunkfile_name(args.file, (i + 1), args.num)
+		thread_id = f"Thread ID #{i}"
+		thread = Thread(target = threadMain, name = thread_id, 
+			args = (thread_id, args.file, chunk_name, chunk, args.dry_run))
+		threads.append(thread)
+		i += 1
+
+	for thread in threads:
+		thread.start()
+
+	for thread in threads:
+		print(f"Waiting for thread {thread.name} to finish...")
+		thread.join()
+
+
+#
+# Split a tarball using threads
+#
+
+
+#main(args)
+mainThreaded(args)
 
 
