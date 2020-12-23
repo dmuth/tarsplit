@@ -114,7 +114,7 @@ function split_and_test_n() {
 
 split_and_test_n 5
 split_and_test_n 10
-split_and_test_n 20
+split_and_test_n 20 # This is a bit abusive in terms of time.
 
 
 if test "${FAILED}"
