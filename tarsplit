@@ -18,6 +18,7 @@ import argparse
 import os
 import tarfile
 from threading import Thread
+import tempfile
 
 
 parser = argparse.ArgumentParser(description = "Split up a tarball into 2 more chunks of roughly equal size.")
@@ -85,7 +86,7 @@ def get_chunkfile_name(file, part, num):
 #
 # Print out our write status for the current chunk
 #
-def print_write_status(filename, num_files_in_current_chunk):
+def print_write_status(filename, num_files_in_current_chunk, thread_id = ""):
 
 	write_status = False
 	if num_files_in_current_chunk < 100:
@@ -99,7 +100,10 @@ def print_write_status(filename, num_files_in_current_chunk):
 			write_status = True
 
 	if write_status:
-		print(f"{num_files_in_current_chunk} files written to {filename}")
+		if thread_id:
+			print(f"{thread_id}: {num_files_in_current_chunk} files written to {filename}")
+		else:
+			print(f"{num_files_in_current_chunk} files written to {filename}")
 
 
 #
@@ -168,31 +172,34 @@ def main(args):
 # Our main entrypoint for a thread.
 # It takes a thread ID, filename to write to, and a list of files to write to that filename.
 #
-def threadMain(thread_id, filename, chunk_filename, chunk_files, dry_run):
+def threadMain(thread_id, filename, sourcedir, chunk_filename, chunk_files, dry_run, tempdir):
 
 	t = tarfile.open(filename, "r")
 
 	size = 0
 	out = None
 	num_files_written = 0
+	outfile = f"{sourcedir}/{chunk_filename}"
 	if not dry_run:
-		out = tarfile.open(chunk_filename, "w:gz")
+		out = tarfile.open(outfile, "w:gz")
 
 	print(f"{thread_id}: Going through chunk files...")
 	for file in chunk_files:
-		f = t.extractfile(file)
-		info = t.getmember(file)
+		#f = t.extractfile(file["name"])
+		info = file["info"]
+		#print(file["name"])
 		if not args.dry_run:
-			out.addfile(info, f)
+			#out.addfile(info, f)
+			out.add(file["name"])
 		size += info.size
 		num_files_written += 1
-		#print_write_status(file, num_files_written)
+		print_write_status(chunk_filename, num_files_written, thread_id = thread_id)
 
 	if not dry_run:
 		out.close()
-		print(f"{thread_id}: Successfully wrote {size} bytes in {len(chunk_files)} files to {chunk_filename}")
+		print(f"{thread_id}: Successfully wrote {size} bytes in {len(chunk_files)} files to {outfile}")
 	else:
-		print(f"Would have written {size} bytes in {num_files_in_current_chunk} files to {filename}")
+		print(f"Would have written {size} bytes in {num_files_in_current_chunk} files to {outfile}")
 
 	t.close()
 
@@ -214,7 +221,9 @@ def get_chunks(file, num_chunks):
 		total_file_size += f.size
 		name = f.name
 		size = f.size
-		files.append({"name": name, "size": size})
+		info = t.getmember(name)
+		files.append({"name": name, "size": size, "info": info})
+		#files.append(name)
 
 	t.close()
 	chunk_size = int(total_file_size / num_chunks)
@@ -226,7 +235,8 @@ def get_chunks(file, num_chunks):
 	current_chunk = 1
 	size = 0
 	for file in files:
-		chunk.append(file["name"])
+		# TEST I should pull out info
+		chunk.append({"name": file["name"], "info": file["info"]})
 		size += file["size"]
 
 		#
@@ -257,11 +267,19 @@ def get_chunks(file, num_chunks):
 def mainThreaded(args):
 
 	check_args(args)
+	source = os.path.abspath(args.file)
+	sourcedir = os.getcwd()
+	tmp = tempfile.TemporaryDirectory(prefix = "tarsplit-")
+	print(f"Extracting tarball to temp directory: {tmp.name}")
 
-	t = tarfile.open(args.file, "r")
+	t = tarfile.open(source, "r")
+	t.extractall(path = tmp.name, numeric_owner = True)
+	os.chdir(tmp.name)
+	#print(tmp.name); 
+	#import time; time.sleep(60)
 
 	print(f"Welcome to Tarsplit! Reading file {args.file}...")
-	(total_file_size, chunk_size, chunks) = get_chunks(args.file, args.num)
+	(total_file_size, chunk_size, chunks) = get_chunks(source, args.num)
 
 	print(f"Total uncompressed file size: {total_file_size} bytes, "
 		+ f"num chunks: {args.num}, chunk size: {chunk_size} bytes")
@@ -272,7 +290,7 @@ def mainThreaded(args):
 		chunk_name = get_chunkfile_name(args.file, (i + 1), args.num)
 		thread_id = f"Thread ID #{i}"
 		thread = Thread(target = threadMain, name = thread_id, 
-			args = (thread_id, args.file, chunk_name, chunk, args.dry_run))
+			args = (thread_id, source, sourcedir, chunk_name, chunk, args.dry_run, tmp.name))
 		threads.append(thread)
 		i += 1
 
@@ -283,6 +301,7 @@ def mainThreaded(args):
 		print(f"Waiting for thread {thread.name} to finish...")
 		thread.join()
 
+	tmp.cleanup()
 
 
 #main(args)
