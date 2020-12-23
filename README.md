@@ -70,6 +70,21 @@ build multiple Docker containers, each with a portion of the original tarball's 
 inheriting the previous container.  This would leverage one of the things Docker is good at: layered filesystems.
 
 
+### This is slow on large files.  Ever hear of multithreading?
+
+Yeah, I tried that after release 1.0.  It turns out that even when using every trick I knew that
+a multithreaded approach consisting of one thread per chunk to be written was *slower* than just
+doing everything in a single thread.  I observed this on a 10-core machine with an SSD, so I'm
+just gonna go ahead and point the finger at the GIL and remind myself that threading in Python is cursed.
+
+
+### What about asyncio?
+
+I used asyncio successfully for another project and haven't ruled it out.  I am however skeptical because of the
+very high level of disk usage.  Async I/O would be more approiate for dozens/hundreds of writers hitting
+the disk occasionally, and this is not the case here.
+
+
 ## Development
 
 ### Support scripts
