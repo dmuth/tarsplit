@@ -78,8 +78,4 @@ Tests can be run with `tests.sh`.  A successful run looks something like this:
 <img src="./img/tests.png" />
 
 
-## TODO
-
-- Make available in Homebrew
-
 
