@@ -7,6 +7,7 @@
 #
 #	pip install .; pip show -f tarsplit
 #	pip uninstall tarsplit
+#	python -m pip install git+https://github.com/dmuth/tarsplit.git
 #
 
 from distutils.core import setup
