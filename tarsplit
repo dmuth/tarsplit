@@ -18,6 +18,8 @@ import argparse
 import os
 import tarfile
 
+from tqdm import tqdm
+
 
 parser = argparse.ArgumentParser(description = "Split up a tarball into 2 more chunks of roughly equal size.")
 parser.add_argument("file", type = str,
@@ -71,26 +73,6 @@ def open_chunkfile(file, part, num, dry_run = False):
 
 
 #
-# Print out our write status for the current chunk
-#
-def print_write_status(filename, num_files_in_current_chunk):
-
-	write_status = False
-	if num_files_in_current_chunk < 100:
-		if num_files_in_current_chunk % 10 == 0:
-			write_status = True
-	elif num_files_in_current_chunk < 1000:
-		if num_files_in_current_chunk % 100 == 0:
-			write_status = True
-	else:
-		if num_files_in_current_chunk % 1000 == 0:
-			write_status = True
-
-	if write_status:
-		print(f"{num_files_in_current_chunk} files written to {filename}")
-
-
-#
 # Our main entrypoint.
 #
 def main(args):
@@ -111,6 +93,9 @@ def main(args):
 	current_chunk = 1
 	num_files_in_current_chunk = 0
 
+	num_files = len(t.getmembers())
+	pbar = tqdm(total = num_files)
+
 	#
 	# Loop through are files, and write them out to separate tarballs.
 	#
@@ -125,7 +110,6 @@ def main(args):
 			out.addfile(info, f)
 
 		num_files_in_current_chunk += 1
-		print_write_status(filename, num_files_in_current_chunk)
 
 		if current_chunk < args.num:
 			if size >= chunk_size:
@@ -142,6 +126,9 @@ def main(args):
 
 				(filename, out) = open_chunkfile(args.file, current_chunk, args.num, 
 					dry_run = args.dry_run)
+
+		pbar.set_description(f"Writing split tarfile: {current_chunk} of {args.num}")
+		pbar.update(1)
 
 	t.close()
 
