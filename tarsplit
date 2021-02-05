@@ -18,6 +18,7 @@ import argparse
 import os
 import tarfile
 
+import humanize
 from tqdm import tqdm
 
 
@@ -84,8 +85,8 @@ def main(args):
 	print(f"Welcome to Tarsplit! Reading file {args.file}...")
 	(total_file_size, chunk_size) = get_chunk_size(t, args.num)
 
-	print(f"Total uncompressed file size: {total_file_size} bytes, "
-		+ f"num chunks: {args.num}, chunk size: {chunk_size} bytes")
+	print(f"Total uncompressed file size: {humanize.naturalsize(total_file_size, binary = True)} bytes, "
+		+ f"num chunks: {args.num}, chunk size: {humanize.naturalsize(chunk_size, binary = True)} bytes")
 
 	(filename, out) = open_chunkfile(args.file, 1, args.num, dry_run = args.dry_run)
 
@@ -116,9 +117,11 @@ def main(args):
 
 				if not args.dry_run:
 					out.close()
-					print(f"Successfully wrote {size} bytes in {num_files_in_current_chunk} files to {filename}")
+					print(f"Successfully wrote {humanize.naturalsize(size, binary = True)}"
+						+ f" bytes in {num_files_in_current_chunk} files to {filename}")
 				else:
-					print(f"Would have written {size} bytes in {num_files_in_current_chunk} files to {filename}")
+					print(f"Would have written {humanize.naturalsize(size, binary = True)}"
+						+ f" bytes in {num_files_in_current_chunk} files to {filename}")
 
 				size = 0
 				current_chunk += 1
@@ -133,10 +136,12 @@ def main(args):
 	t.close()
 
 	if not args.dry_run:
-		print(f"Successfully wrote {size} bytes in {num_files_in_current_chunk} files to {filename}")
+		print(f"Successfully wrote {humanize.naturalsize(size, binary = True)} bytes in"
+			+ f" {num_files_in_current_chunk} files to {filename}")
 		out.close()
 	else:
-		print(f"Would have written {size} bytes in {num_files_in_current_chunk} files to {filename}")
+		print(f"Would have written {humanize.naturalsize(size, binary = True)} bytes in"
+			+ f" {num_files_in_current_chunk} files to {filename}")
 
 
 

@@ -30,7 +30,7 @@ setup(
         	"Programming Language :: Python :: 3",
 	],
 
-	install_requires = [ "tqdm" ],
+	install_requires = [ "humanize", "tqdm" ],
 
 	project_urls = {
 		"Source": "https://github.com/dmuth/tarsplit",
