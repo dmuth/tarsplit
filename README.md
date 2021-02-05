@@ -20,20 +20,8 @@ This is useful for gigantic tarballs that need to need to be split up so that th
 `tarsplit [ --dry-run ] tarball num_files`
 
 Example run:
-```
-$ ./tarsplit ./test-tarball.tgz 3
-Welcome to Tarsplit! Reading file ./test-tarball.tgz...
-Total uncompressed file size: 31457280 bytes, num chunks: 3, chunk size: 10485760 bytes
-10 files written to test-tarball.tgz-part-1-of-3
-20 files written to test-tarball.tgz-part-1-of-3
-Successfully wrote 10485760 bytes in 22 files to test-tarball.tgz-part-1-of-3
-10 files written to test-tarball.tgz-part-2-of-3
-20 files written to test-tarball.tgz-part-2-of-3
-Successfully wrote 10485760 bytes in 22 files to test-tarball.tgz-part-2-of-3
-10 files written to test-tarball.tgz-part-3-of-3
-20 files written to test-tarball.tgz-part-3-of-3
-Successfully wrote 10485760 bytes in 21 files to test-tarball.tgz-part-3-of-3
-```
+
+<img src="./img/tarsplit-run.png" />
 
 
 ## FAQ
