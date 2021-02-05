@@ -55,7 +55,7 @@ do
 	TARGET="${DIR}/file-${I}.data"
 	if test ! -f "${TARGET}"
 	then
-		dd if=/dev/zero of="${TARGET}" bs=1m count=1 2> /dev/null
+		dd if=/dev/zero of="${TARGET}" bs=1048576 count=1 2> /dev/null
 	fi
 
 	#
@@ -68,7 +68,7 @@ do
 		TARGET="${DIR}/${I}/file-${J}.data"
 		if test ! -f "${TARGET}"
 		then
-			dd if=/dev/zero of="${TARGET}" bs=1m count=1 2> /dev/null
+			dd if=/dev/zero of="${TARGET}" bs=1048576 count=1 2> /dev/null
 		fi
 	done
 
