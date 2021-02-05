@@ -12,11 +12,21 @@
 
 from distutils.core import setup
 import setuptools
+import pathlib
+
+#
+# Get the long description from the README file
+#
+here = pathlib.Path(__file__).parent.resolve()
+long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
 	name = "tarsplit",
-	version = "1.0",
+ 	# Version identifiers: https://www.python.org/dev/peps/pep-0440/#version-scheme
+	version = "1.0.post02",
 	description = "Split tarballs into smaller pieces along file boundaries.",
+	long_description=long_description,
+	long_description_content_type = "text/markdown",
 	author = "Douglas Muth",
 	author_email = "doug.muth@gmail.com",
 	url = "https://github.com/dmuth/tarsplit",
