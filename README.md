@@ -71,6 +71,13 @@ the disk occasionally, and this is not the case here.
 - `sha1-from-tarball.sh` - Extract a tarball, then do the same thing to the contents as `sha1-from-directory.sh`.
 
 
+### Publishing a new package
+
+- `rm -rfv dist/`
+- `python3 ./setup.py sdist`
+- `twine upload dist/*`
+
+
 ### Tests
 
 Tests can be run with `tests.sh`.  A successful run looks something like this:
