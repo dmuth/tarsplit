@@ -10,20 +10,9 @@ This is useful for gigantic tarballs that need to need to be split up so that th
 
 ## Installation
 
-### Homebrew
-
-```
-curl https://raw.githubusercontent.com/dmuth/tarsplit/main/Formula/tarsplit.rb > tarsplit.rb \
-   && brew install ./tarsplit.rb
-```
-
-
 ### Manually
 
-```
-curl https://raw.githubusercontent.com/dmuth/tarsplit/main/tarsplit > /usr/local/bin/tarsplit \
-   && chmod 755 /usr/local/bin/tarsplit
-```
+```python3 -m pip install git+https://github.com/dmuth/tarsplit.git```
 
 
 ## Usage
