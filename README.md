@@ -10,6 +10,12 @@ This is useful for gigantic tarballs that need to need to be split up so that th
 
 ## Installation
 
+
+### Preferred method
+
+```python3 -m pip install tarsplit```
+
+
 ### Manually
 
 ```python3 -m pip install git+https://github.com/dmuth/tarsplit.git```
