@@ -7,3 +7,12 @@
 tarball-root-dir
 test-tarball.tgz
 
+# Build artifacts
+dist/
+MANIFEST
+tarsplit.egg-info
+
+# Mac OS/X
+.DS_Store
+
+
