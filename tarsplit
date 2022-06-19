@@ -98,12 +98,16 @@ def main(args):
 	pbar = tqdm(total = num_files)
 
 	#
-	# Loop through are files, and write them out to separate tarballs.
+	# Loop through our files, and write them out to separate tarballs.
 	#
 	for f in t.getmembers():
 
 		name = f.name
 		size += f.size
+
+		if name[len(name) - 1] == "/":
+			print(f"File {name} ends in Slash, skipping due to a bug in the tarfile module. (Directory will still be created by files within that directory)")
+			continue
 
 		f = t.extractfile(name)
 		info = t.getmember(name)
