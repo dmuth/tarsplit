@@ -23,7 +23,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 setup(
 	name = "tarsplit",
  	# Version identifiers: https://www.python.org/dev/peps/pep-0440/#version-scheme
-	version = "1.0.post04",
+	version = "1.0.post05",
 	description = "Split tarballs into smaller pieces along file boundaries.",
 	long_description=long_description,
 	long_description_content_type = "text/markdown",

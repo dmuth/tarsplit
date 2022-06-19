@@ -80,6 +80,7 @@ the disk occasionally, and this is not the case here.
 ### Publishing a new package
 
 - `rm -rfv dist`
+- Bump version number in `setup.py`
 - `python3 ./setup.py sdist`
 - `twine upload dist/*`
 
